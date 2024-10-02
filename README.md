@@ -20,13 +20,14 @@ docker-compose up
 ```
 
 ## Project Overview
-* CRUD Operations: Implemented using ModelViewSet, which provides complete functionality for creating, reading, updating,
+* **CRUD Operations**: Implemented using ModelViewSet, which provides complete functionality for creating, reading, updating,
 and deleting resources.
 
 
-* Team Membership Management: Adding and removing persons from teams is handled by APIView. This choice was made because
-ViewSet requires a single serializer for all operations, which can be inconvenient when only a limited set of fields is
-needed for certain actions.
+* **Team Membership Management**: Adding and removing persons from teams is handled by TeamMembershipViewSet. This choice
+was made because PersonViewSet requires a single serializer for all operations, which can be inconvenient when only a limited
+set of fields is needed for certain actions. Additionally, using separate methods helps avoid potential overload in a
+single method as logic expands in the future, ensuring clearer structure and maintainability.
 
 
 * The <kbd>.env</kbd> file is included in <kbd>.gitignore</kbd>, but for demonstration purposes, I've provided an
