@@ -25,6 +25,9 @@ class AddPersonToTeamAPIView(APIView):
             team_id = serializer.validated_data['team_id']
             team = get_object_or_404(Team, id=team_id)
 
+            if person.teams.filter(id=team.id).exists():
+                return Response({'status': 'person is already in this team'}, status=status.HTTP_400_BAD_REQUEST)
+
             person.teams.add(team)
             return Response({'status': 'person added to team'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -38,6 +41,9 @@ class RemovePersonFromTeamAPIView(APIView):
         if serializer.is_valid():
             team_id = serializer.validated_data['team_id']
             team = get_object_or_404(Team, id=team_id)
+
+            if not person.teams.filter(id=team.id).exists():
+                return Response({'status': 'person is not in this team'}, status=status.HTTP_400_BAD_REQUEST)
 
             person.teams.remove(team)
             return Response({'status': 'person removed from team'}, status=status.HTTP_200_OK)

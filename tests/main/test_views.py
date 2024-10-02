@@ -81,6 +81,15 @@ class TestAddPersonToTeamAPIView:
         )
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
+    def test_add_person_already_in_team(self, client, team, person):
+        person.teams.add(team)  # Добавляем участника в команду
+        response = client.post(
+            reverse('person-add-to-team', args=[person.id]),
+            {'team_id': team.id}
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data['status'] == 'person is already in this team'
+
 
 @pytest.mark.django_db
 class TestRemovePersonFromTeamAPIView:
@@ -99,3 +108,11 @@ class TestRemovePersonFromTeamAPIView:
             {'team_id': 999}
         )
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_remove_person_not_in_team(self, client, team, person):
+        response = client.post(
+            reverse('person-remove-from-team', args=[person.id]),
+            {'team_id': team.id}
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data['status'] == 'person is not in this team'
