@@ -21,7 +21,9 @@ class TeamMembershipViewSet(viewsets.ViewSet):
 
     This ViewSet provides the following actions:
     - add_member: Adds a person to a specified team.
+        Requires 'team_id' to be passed in the request body.
     - remove_member: Removes a person from a specified team.
+        Requires 'team_id' to be passed in the request body.
     """
     def add_member(self, request, pk):
         person = get_object_or_404(Person, id=pk)
