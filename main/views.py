@@ -5,27 +5,74 @@ from .serializers import TeamSerializer, PersonSerializer, TeamMembershipSeriali
 from django.shortcuts import get_object_or_404
 
 
+# CRUD for Teams
 class TeamViewSet(viewsets.ModelViewSet):
+    """
+    General ViewSet description
+
+    list: Retrieve a list of all available teams.
+
+    retrieve: Retrieve the details of a specific team by its ID.
+
+    create: Create a new team with the specified attributes such as name, description, etc.
+
+    update: Update the information of an existing team by its ID.
+
+    partial_update: Partially update a team (only the provided attributes will be updated).
+
+    destroy: Delete a team by its ID.
+    """
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
 
 
+# CRUD for Persons
 class PersonViewSet(viewsets.ModelViewSet):
+    """
+    General ViewSet description
+
+    list: Retrieve a list of all available persons.
+
+    retrieve: Retrieve the details of a specific person by their ID.
+
+    create: Create a new person with the specified attributes like name, age, etc.
+
+    update: Update the information of an existing person by their ID.
+
+    partial_update: Partially update a person's details (only the provided attributes will be updated).
+
+    destroy: Delete a person by their ID.
+    """
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
 
 
+# A ViewSet for adding or removing members from a team.
 class TeamMembershipViewSet(viewsets.ViewSet):
     """
-    A ViewSet for managing team membership.
+    General ViewSet description
 
-    This ViewSet provides the following actions:
-    - add_member: Adds a person to a specified team.
-        Requires 'team_id' to be passed in the request body.
-    - remove_member: Removes a person from a specified team.
-        Requires 'team_id' to be passed in the request body.
+    add_member: Add a person to a team.
+    remove_member: Remove a person from a team.
+
+    The request body should contain:
+    - team_id: The ID of the team to which the person is being added or from which the person is being removed.
     """
     def add_member(self, request, pk):
+        """
+        Add a person to a team.
+
+        Args:
+        - request: The HTTP request containing the team information (team_id).
+        - pk: The ID of the person to be added to the team.
+
+        The request body should contain:
+        - team_id: The ID of the team.
+
+        Returns:
+        - HTTP 200 OK if the person was successfully added to the team.
+        - HTTP 400 BAD REQUEST if the person is already a member of the team or if the data is invalid.
+        """
         person = get_object_or_404(Person, id=pk)
         serializer = TeamMembershipSerializer(data=request.data)
 
@@ -42,6 +89,20 @@ class TeamMembershipViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def remove_member(self, request, pk):
+        """
+        Remove a person from a team.
+
+        Args:
+        - request: The HTTP request containing the team information (team_id).
+        - pk: The ID of the person to be removed from the team.
+
+        The request body should contain:
+        - team_id: The ID of the team.
+
+        Returns:
+        - HTTP 200 OK if the person was successfully removed from the team.
+        - HTTP 400 BAD REQUEST if the person is not a member of the team or if the data is invalid.
+        """
         person = get_object_or_404(Person, id=pk)
         serializer = TeamMembershipSerializer(data=request.data)
 
